@@ -21,6 +21,11 @@ import {
 } from 'lucide-react';
 import './App.css';
 
+const PRODUCT_PRICE_OVERRIDES = {
+  'coffee-01': { price: 800, weight: 'kg' },
+  'pepper-01': { price: 1200, weight: 'kg' }
+};
+
 export default function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
@@ -52,6 +57,7 @@ export default function App() {
       } else {
         const mapped = data.map(p => ({
             ...p,
+            ...(PRODUCT_PRICE_OVERRIDES[p.id] || {}),
             image: p.image_url,
             reviewsCount: p.reviews_count,
             flavorNotes: p.flavor_notes
@@ -226,6 +232,7 @@ export default function App() {
       <div className="top-strip">
         <div className="container strip-content">
           <span>🌿 100% Direct Estate Origin from Western Ghats</span>
+          <span className="contact-strip-desktop">📞 Contact: Vidwan NA (+91 9019818197)</span>
           <span>⚡ Free Express Delivery across India on orders above ₹999</span>
         </div>
       </div>
@@ -253,8 +260,8 @@ export default function App() {
 
           <div className="header-actions">
             {user ? (
-              <div className="user-profile-badge">
-                <span className="user-email-text">{user.email}</span>
+              <div className="user-profile-badge" title={user.email}>
+                <span className="user-avatar-initial">{user.email ? user.email[0].toUpperCase() : 'U'}</span>
                 <button className="signout-btn" onClick={handleSignOut} title="Sign Out">
                   Sign Out
                 </button>
@@ -269,7 +276,12 @@ export default function App() {
               <span>Bag</span>
               {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </button>
-            <button className="menu-toggle-btn" onClick={() => setIsMobileMenuOpen(true)}>
+            <button
+              className="menu-toggle-btn"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={isMobileMenuOpen}
+            >
               <Menu size={24} />
             </button>
           </div>
@@ -278,21 +290,37 @@ export default function App() {
 
       {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
-        <div className="mobile-menu-drawer">
-          <div className="mobile-menu-header">
-            <button onClick={() => setIsMobileMenuOpen(false)}><X size={24} /></button>
-          </div>
-          <nav className="mobile-nav-links">
-            <a href="#products" onClick={() => setIsMobileMenuOpen(false)}>Collection</a>
-            <a href="#story" onClick={() => setIsMobileMenuOpen(false)}>Our Estates</a>
-            <a href="#pairing" onClick={() => setIsMobileMenuOpen(false)}>Chef’s Secret</a>
-            <a href="#reviews" onClick={() => setIsMobileMenuOpen(false)}>Reviews</a>
-            {user ? (
-              <button onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }}>Sign Out</button>
-            ) : (
-              <button onClick={() => { setIsAuthOpen(true); setAuthMode('signin'); setIsMobileMenuOpen(false); }}>Sign In</button>
-            )}
-          </nav>
+        <div className="mobile-menu-backdrop" onClick={() => setIsMobileMenuOpen(false)}>
+          <aside
+            className="mobile-menu-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mobile-menu-header">
+              <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close navigation menu"><X size={24} /></button>
+            </div>
+            <nav className="mobile-nav-links">
+              <a href="#products" onClick={() => setIsMobileMenuOpen(false)}>Collection</a>
+              <a href="#story" onClick={() => setIsMobileMenuOpen(false)}>Our Estates</a>
+              <a href="#pairing" onClick={() => setIsMobileMenuOpen(false)}>Chef’s Secret</a>
+              <a href="#reviews" onClick={() => setIsMobileMenuOpen(false)}>Reviews</a>
+              <div className="mobile-contact-card" style={{ marginTop: '10px', paddingTop: '15px', borderTop: '1px solid var(--border-subtle)', fontSize: '13px', color: 'var(--color-muted)' }}>
+                <strong>Contact Us</strong>
+                <p style={{ margin: '4px 0 0 0', color: 'var(--color-dark)', fontWeight: '600' }}>Vidwan NA</p>
+                <a href="tel:+919019818197" style={{ color: 'var(--accent-amber)', textDecoration: 'none', fontWeight: '700', display: 'block', marginTop: '2px' }}>+91 9019818197</a>
+              </div>
+              {user ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px', paddingTop: '20px', borderTop: '1px solid var(--border-subtle)' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--color-muted)', wordBreak: 'break-all' }}>Signed in as {user.email}</span>
+                  <button onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }}>Sign Out</button>
+                </div>
+              ) : (
+                <button style={{ marginTop: '10px', paddingTop: '20px', borderTop: '1px solid var(--border-subtle)' }} onClick={() => { setIsAuthOpen(true); setAuthMode('signin'); setIsMobileMenuOpen(false); }}>Sign In</button>
+              )}
+            </nav>
+          </aside>
         </div>
       )}
 
@@ -458,7 +486,7 @@ export default function App() {
               if (products[0]) addToCart(products[0], 1);
               if (products[1]) addToCart(products[1], 1);
             }}>
-              Get The Complete Set (₹1,245)
+              Get The Complete Set (₹2,000)
             </button>
           </div>
         </div>
@@ -480,7 +508,7 @@ export default function App() {
               <p className="review-body">
                 "The Attikan Estate coffee has an incredible dark chocolate profile with zero bitterness in my French Press. Absolute morning staple!"
               </p>
-              <span className="reviewer">— Arjun M., Bengaluru</span>
+              <span className="reviewer">— Jaideep M., Bengaluru</span>
             </div>
 
             <div className="review-box">
@@ -490,7 +518,7 @@ export default function App() {
               <p className="review-body">
                 "You haven't tasted black pepper until you've tried Wayanad Tellicherry Extra Bold. The aroma hits you from across the room."
               </p>
-              <span className="reviewer">— Priya S., Mumbai</span>
+              <span className="reviewer">— Anush S., Mumbai</span>
             </div>
 
             <div className="review-box">
@@ -500,7 +528,7 @@ export default function App() {
               <p className="review-body">
                 "Clean UI, lightning-fast delivery to Delhi, and world-class quality. Having only two products shows true dedication."
               </p>
-              <span className="reviewer">— Vikram K., New Delhi</span>
+              <span className="reviewer">— Jeethu K., New Delhi</span>
             </div>
           </div>
         </div>
@@ -515,6 +543,11 @@ export default function App() {
               <span>KODAGU COFFEE</span>
             </div>
             <p>Pure single-origin specialty coffee and grand cru heirloom pepper. Directly from Indian estates.</p>
+            <div className="footer-contact-box" style={{ marginTop: '16px' }}>
+              <span style={{ display: 'block', fontSize: '12px', color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contact Us</span>
+              <strong style={{ display: 'block', color: 'white', fontSize: '15px', marginTop: '4px' }}>Vidwan NA</strong>
+              <a href="tel:+919019818197" style={{ color: 'var(--accent-gold)', fontSize: '15px', fontWeight: '700', textDecoration: 'none', display: 'inline-block', marginTop: '2px' }}>+91 9019818197</a>
+            </div>
           </div>
 
           <div className="footer-col">

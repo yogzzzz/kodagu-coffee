@@ -20,12 +20,23 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-main);
   color: var(--color-dark);
   -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
 }
 
 h1, h2, h3, h4, .logo-text h1, .hero-text-col h2, .section-title h3, .story-txt h3, .pairing-card h3, .modal-txt-col h2, .drawer-header-row h3 {
@@ -306,7 +317,9 @@ h1, h2, h3, h4, .logo-text h1, .hero-text-col h2, .section-title h3, .story-txt 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 8px;
   flex: 1;
+  min-height: 0;
 }
 
 .hero-card-info span {
@@ -523,6 +536,8 @@ h1, h2, h3, h4, .logo-text h1, .hero-text-col h2, .section-title h3, .story-txt 
   display: flex;
   align-items: baseline;
   gap: 2px;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .currency {
@@ -852,7 +867,7 @@ h1, h2, h3, h4, .logo-text h1, .hero-text-col h2, .section-title h3, .story-txt 
 }
 
 /* Modals & Drawers */
-.modal-backdrop, .drawer-backdrop {
+.modal-backdrop, .drawer-backdrop, .mobile-menu-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -864,6 +879,10 @@ h1, h2, h3, h4, .logo-text h1, .hero-text-col h2, .section-title h3, .story-txt 
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.mobile-menu-backdrop {
+  justify-content: flex-end;
 }
 
 .modal-content-box {
@@ -1284,21 +1303,25 @@ code {
 .user-profile-badge {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: #f5f5f4;
-  padding: 6px 14px;
-  border-radius: 20px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 30px;
   border: 1px solid var(--border-subtle);
   font-size: 13px;
 }
 
-.user-email-text {
-  color: var(--color-medium);
-  font-weight: 500;
-  max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.user-avatar-initial {
+  width: 28px;
+  height: 28px;
+  background: var(--accent-amber);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .signout-btn {
@@ -1390,17 +1413,19 @@ code {
 }
 
 .mobile-menu-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 280px;
+  width: min(320px, 88vw);
+  min-height: 100%;
   background: white;
-  z-index: 2000;
-  padding: 20px;
-  box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+  padding: 24px;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.16);
   display: flex;
   flex-direction: column;
+  animation: slideInFromRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .mobile-menu-header {
@@ -1443,28 +1468,139 @@ code {
     padding: 0 16px;
   }
 
-  .desktop-nav {
+  .top-strip {
+    font-size: 10px;
+    padding: 5px 0;
+  }
+
+  .strip-content {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    line-height: 1.35;
+    padding: 0 8px;
+    text-align: center;
+  }
+
+  .strip-content span {
+    max-width: 100%;
+  }
+
+  .site-header {
+    padding: 10px 0;
+  }
+
+  .header-inner {
+    gap: 8px;
+  }
+
+  .brand-logo {
+    gap: 8px;
+  }
+
+  .logo-icons {
+    padding: 4px 6px;
+  }
+
+  .logo-icons svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .logo-text h1 {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .logo-text p {
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  .desktop-nav,
+  .signin-nav-btn {
     display: none;
+  }
+
+  .header-actions {
+    margin-left: auto;
+    gap: 6px;
+  }
+
+  .cart-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .menu-toggle-btn {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+  }
+
+  .hero-sec {
+    padding: 40px 0;
   }
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 20px 0;
+    gap: 30px;
   }
 
   .hero-text-col h2 {
-    font-size: 36px;
-    letter-spacing: -1px;
+    font-size: 28px;
+  }
+
+  .hero-text-col p {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .badge-pill,
+  .trust-badges div {
+    line-height: 1.35;
   }
 
   .hero-cards-col {
     grid-template-columns: 1fr;
   }
 
+  .hero-preview-card {
+    height: auto;
+  }
+
+  .hero-preview-card img {
+    height: clamp(190px, 58vw, 240px);
+  }
+
+  .hero-card-info {
+    min-height: 128px;
+  }
+
+  .hero-card-info p {
+    margin-top: auto;
+  }
+
   .products-grid {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  .product-content {
+    padding: 24px;
+  }
+
+  .product-card-footer {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .price-display {
+    flex: 1 1 130px;
   }
 
   .story-wrapper {
@@ -1482,10 +1618,29 @@ code {
     gap: 20px;
   }
 
+  .reviews-sec {
+    padding: 40px 0;
+  }
+
+  .site-footer {
+    padding: 40px 0 20px 0;
+    margin-top: 40px;
+  }
+
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 34px;
+    margin-bottom: 34px;
   }
+
+  .footer-col {
+    min-width: 0;
+  }
+
+  .newsletter-form {
+    max-width: 460px;
+  }
+
 
   .modal-grid {
     grid-template-columns: 1fr;
@@ -1520,24 +1675,78 @@ code {
     font-size: 28px;
   }
 
-  .strip-content {
-    flex-direction: column;
-    gap: 4px;
-    text-align: center;
-    font-size: 11px;
+  .contact-strip-desktop {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
+  .toast-notification {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .brand-logo {
+    min-width: 0;
+  }
+
+  .logo-text {
+    min-width: 0;
+  }
+
+  .logo-text p {
+    display: none;
+  }
+
   .hero-text-col h2 {
     font-size: 30px;
   }
 
+  .trust-badges {
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .hero-preview-card {
-    height: 320px;
+    height: auto;
   }
 
   .product-img-wrap {
     height: 240px;
+  }
+
+  .product-meta-row {
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .product-card-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .price-display {
+    width: 100%;
+    flex: none;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+  }
+
+  .newsletter-form button {
+    min-height: 44px;
+  }
+
+  .mobile-menu-drawer {
+    width: min(320px, 92vw);
+    padding: 22px 20px;
   }
 }
