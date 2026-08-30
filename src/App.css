@@ -1343,11 +1343,16 @@ code {
   font-weight: 800;
 }
 
-.auth-error-msg {
-  color: var(--accent-terracotta);
-  font-size: 13px;
-  margin: 10px 0;
-  font-weight: 500;
+.auth-success-box {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.auth-success-box p {
+  color: var(--color-dark);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
 .auth-toggle-txt {

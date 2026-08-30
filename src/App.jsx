@@ -40,6 +40,7 @@ export default function App() {
   const [authPassword, setAuthPassword] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
+  const [authSuccessMessage, setAuthSuccessMessage] = useState(null);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -80,6 +81,7 @@ export default function App() {
     e.preventDefault();
     setAuthLoading(true);
     setAuthError(null);
+    setAuthSuccessMessage(null);
 
     if (authMode === 'signin') {
       const { error } = await supabase.auth.signInWithPassword({
@@ -101,8 +103,7 @@ export default function App() {
       if (error) {
         setAuthError(error.message);
       } else {
-        setIsAuthOpen(false);
-        showToast('Account created successfully!');
+        setAuthSuccessMessage(`📧 Verification link sent to ${authEmail}! Please check your email and click the confirmation link to complete registration.`);
         setAuthPassword('');
       }
     }
@@ -257,7 +258,7 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              <button className="signin-nav-btn" onClick={() => { setIsAuthOpen(true); setAuthMode('signin'); }}>
+              <button className="signin-nav-btn" onClick={() => { setIsAuthOpen(true); setAuthMode('signin'); setAuthError(null); setAuthSuccessMessage(null); }}>
                 Sign In
               </button>
             )}
@@ -751,36 +752,47 @@ export default function App() {
               <X size={20} />
             </button>
             <h3>{authMode === 'signin' ? 'Sign In' : 'Create Account'}</h3>
-            <form onSubmit={handleAuthSubmit}>
-              <div className="field-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  required
-                  value={authEmail}
-                  onChange={e => setAuthEmail(e.target.value)}
-                />
+            {authSuccessMessage ? (
+              <div className="auth-success-box">
+                <p>{authSuccessMessage}</p>
+                <button className="btn-primary-dark full-w" onClick={() => setIsAuthOpen(false)}>
+                  Close
+                </button>
               </div>
-              <div className="field-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  required
-                  value={authPassword}
-                  onChange={e => setAuthPassword(e.target.value)}
-                />
-              </div>
-              {authError && <p className="auth-error-msg">{authError}</p>}
-              <button type="submit" className="btn-primary-dark full-w" disabled={authLoading}>
-                {authLoading ? 'Processing...' : (authMode === 'signin' ? 'Sign In' : 'Sign Up')}
-              </button>
-            </form>
-            <p className="auth-toggle-txt">
-              {authMode === 'signin' ? "Don't have an account? " : "Already have an account? "}
-              <button onClick={() => setAuthMode(authMode === 'signin' ? 'signup' : 'signin')}>
-                {authMode === 'signin' ? 'Sign Up' : 'Sign In'}
-              </button>
-            </p>
+            ) : (
+              <form onSubmit={handleAuthSubmit}>
+                <div className="field-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={authEmail}
+                    onChange={e => setAuthEmail(e.target.value)}
+                  />
+                </div>
+                <div className="field-group">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    required
+                    value={authPassword}
+                    onChange={e => setAuthPassword(e.target.value)}
+                  />
+                </div>
+                {authError && <p className="auth-error-msg">{authError}</p>}
+                <button type="submit" className="btn-primary-dark full-w" disabled={authLoading}>
+                  {authLoading ? 'Processing...' : (authMode === 'signin' ? 'Sign In' : 'Sign Up')}
+                </button>
+              </form>
+            )}
+            {!authSuccessMessage && (
+              <p className="auth-toggle-txt">
+                {authMode === 'signin' ? "Don't have an account? " : "Already have an account? "}
+                <button onClick={() => { setAuthMode(authMode === 'signin' ? 'signup' : 'signin'); setAuthError(null); }}>
+                  {authMode === 'signin' ? 'Sign Up' : 'Sign In'}
+                </button>
+              </p>
+            )}
           </div>
         </div>
       )}
