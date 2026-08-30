@@ -16,7 +16,8 @@ import {
   Sparkles,
   MapPin,
   Clock,
-  Package
+  Package,
+  Menu
 } from 'lucide-react';
 import './App.css';
 
@@ -24,6 +25,7 @@ export default function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'checkout', 'success'
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', pincode: '', upiId: '' });
@@ -243,10 +245,10 @@ export default function App() {
           </div>
 
           <nav className="desktop-nav">
-            <a href="#products">Collection</a>
-            <a href="#story">Our Estates</a>
-            <a href="#pairing">Chef’s Secret</a>
-            <a href="#reviews">Reviews</a>
+            <a href="#products" onClick={() => setIsMobileMenuOpen(false)}>Collection</a>
+            <a href="#story" onClick={() => setIsMobileMenuOpen(false)}>Our Estates</a>
+            <a href="#pairing" onClick={() => setIsMobileMenuOpen(false)}>Chef’s Secret</a>
+            <a href="#reviews" onClick={() => setIsMobileMenuOpen(false)}>Reviews</a>
           </nav>
 
           <div className="header-actions">
@@ -267,9 +269,32 @@ export default function App() {
               <span>Bag</span>
               {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </button>
+            <button className="menu-toggle-btn" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={24} />
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu-drawer">
+          <div className="mobile-menu-header">
+            <button onClick={() => setIsMobileMenuOpen(false)}><X size={24} /></button>
+          </div>
+          <nav className="mobile-nav-links">
+            <a href="#products" onClick={() => setIsMobileMenuOpen(false)}>Collection</a>
+            <a href="#story" onClick={() => setIsMobileMenuOpen(false)}>Our Estates</a>
+            <a href="#pairing" onClick={() => setIsMobileMenuOpen(false)}>Chef’s Secret</a>
+            <a href="#reviews" onClick={() => setIsMobileMenuOpen(false)}>Reviews</a>
+            {user ? (
+              <button onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }}>Sign Out</button>
+            ) : (
+              <button onClick={() => { setIsAuthOpen(true); setAuthMode('signin'); setIsMobileMenuOpen(false); }}>Sign In</button>
+            )}
+          </nav>
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="hero-sec">
