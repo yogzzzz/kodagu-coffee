@@ -119,6 +119,11 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  const openCart = () => {
+    setCheckoutStep('cart');
+    setIsCartOpen(true);
+  };
+
   const addToCart = (product, quantity = 1) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
@@ -130,7 +135,7 @@ export default function App() {
       return [...prev, { ...product, quantity }];
     });
     showToast(`Added ${product.name} to your cart`);
-    setIsCartOpen(true);
+    openCart();
   };
 
   const updateQuantity = (id, delta) => {
@@ -256,7 +261,7 @@ export default function App() {
                 Sign In
               </button>
             )}
-            <button className="cart-btn" onClick={() => setIsCartOpen(true)}>
+            <button className="cart-btn" onClick={openCart}>
               <ShoppingBag size={20} />
               <span>Bag</span>
               {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
